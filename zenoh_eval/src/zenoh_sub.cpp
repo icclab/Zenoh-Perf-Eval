@@ -1,4 +1,9 @@
 #include <memory>
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <iomanip>
+#include <string>
 
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/image.hpp"
@@ -15,6 +20,30 @@ class ZenohSubscriber : public rclcpp::Node
     ZenohSubscriber()
     : Node("ZenohSubscriber")
     {
+      double file_time = this->get_clock()->now().seconds();
+      std::string time_str = std::to_string(file_time);
+
+      image_raw_.open(time_str + "oak_image_raw.csv");
+      image_raw_ << "msg_published_time" << " " << "msg_received_time" << std::endl;
+
+      image_rect_.open(time_str + "oak_image_rect.csv");
+      image_rect_ << "msg_published_time" << " " << "msg_received_time" << std::endl;
+
+      image_raw_comp_.open(time_str + "oak_image_raw_comp.csv");
+      image_raw_comp_ << "msg_published_time" << " " << "msg_received_time" << std::endl;
+
+      image_stereo_.open(time_str + "oak_image_stereo.csv");
+      image_stereo_ << "msg_published_time" << " " << "msg_received_time" << std::endl; 
+
+      costmap_.open(time_str + "costmap.csv");
+      costmap_ << "msg_published_time" << " " << "msg_received_time" << std::endl; 
+
+      costmap_raw_.open(time_str + "costmap_raw.csv");
+      costmap_raw_ << "msg_published_time" << " " << "msg_received_time" << std::endl;   
+
+      costmap_updates_.open(time_str + "costmap_updates.csv");
+      costmap_updates_ << "msg_published_time" << " " << "msg_received_time" << std::endl; 
+
       rclcpp::SubscriptionOptions sub_options;
       sub_options.qos_overriding_options = rclcpp::QosOverridingOptions::with_default_policies();
 
@@ -35,14 +64,18 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
-      RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
-      RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
+      image_raw_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+
+      // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
+      // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
     }
 
     void image_rect_callback(const sensor_msgs::msg::Image::SharedPtr msg) 
     {
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
+
+      image_rect_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -53,6 +86,8 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
+      image_raw_comp_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
     }
@@ -61,6 +96,8 @@ class ZenohSubscriber : public rclcpp::Node
     {
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
+
+      image_stereo_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -71,6 +108,8 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
+      costmap_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
     }
@@ -79,6 +118,8 @@ class ZenohSubscriber : public rclcpp::Node
     {
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
+
+      costmap_raw_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -89,8 +130,21 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
+      costmap_updates_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
+    }
+
+    ~ZenohSubscriber()
+    {
+      image_raw_.close();
+      image_rect_.close();
+      image_raw_comp_.close();
+      image_stereo_.close();
+      costmap_.close();
+      costmap_raw_.close();
+      costmap_updates_.close();
     }
     
   private:
@@ -102,6 +156,14 @@ class ZenohSubscriber : public rclcpp::Node
     rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_sub_;
     rclcpp::Subscription<nav2_msgs::msg::Costmap>::SharedPtr costmap_raw_sub_;
     rclcpp::Subscription<map_msgs::msg::OccupancyGridUpdate>::SharedPtr costmap_updates_sub_;
+
+    std::ofstream image_raw_;
+    std::ofstream image_rect_;
+    std::ofstream image_raw_comp_;
+    std::ofstream image_stereo_;
+    std::ofstream costmap_;
+    std::ofstream costmap_raw_;
+    std::ofstream costmap_updates_;
 };
 
 int main(int argc, char * argv[])
