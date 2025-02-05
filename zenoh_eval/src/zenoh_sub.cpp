@@ -24,25 +24,25 @@ class ZenohSubscriber : public rclcpp::Node
       std::string time_str = std::to_string(file_time);
 
       image_raw_.open(time_str + "oak_image_raw.csv");
-      image_raw_ << "msg_published_time" << " " << "msg_received_time" << std::endl;
+      image_raw_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_height" << " " << "uint32_width" << " " << "uint32_step" << " " << "uint8_data_size.bytes" << std::endl;
 
       image_rect_.open(time_str + "oak_image_rect.csv");
-      image_rect_ << "msg_published_time" << " " << "msg_received_time" << std::endl;
+      image_rect_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_height" << " " << "uint32_width" << " " << "uint32_step" << " " << "uint8_data_size.bytes" << std::endl;
 
       image_raw_comp_.open(time_str + "oak_image_raw_comp.csv");
-      image_raw_comp_ << "msg_published_time" << " " << "msg_received_time" << std::endl;
+      image_raw_comp_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint8_data_size.bytes" << std::endl;
 
       image_stereo_.open(time_str + "oak_image_stereo.csv");
-      image_stereo_ << "msg_published_time" << " " << "msg_received_time" << std::endl; 
+      image_stereo_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_height" << " " << "uint32_width" << " " << "uint32_step" << " " << "uint8_data_size.bytes" << std::endl; 
 
       costmap_.open(time_str + "costmap.csv");
-      costmap_ << "msg_published_time" << " " << "msg_received_time" << std::endl; 
+      costmap_ << "msg_published_time" << " " << "msg_received_time" << " " << "info.width" << " " << "info.height" << " " << "int8_data_size.bytes" << std::endl; 
 
       costmap_raw_.open(time_str + "costmap_raw.csv");
-      costmap_raw_ << "msg_published_time" << " " << "msg_received_time" << std::endl;   
+      costmap_raw_ << "msg_published_time" << " " << "msg_received_time" << " " << "map_load_time.secs" << " " << "update_time.secs" << " " << "uint32_metadata.size_x" << " " << "uint32_metadata.size_y" << " " << "uint8_data_size.bytes" << std::endl;   
 
       costmap_updates_.open(time_str + "costmap_updates.csv");
-      costmap_updates_ << "msg_published_time" << " " << "msg_received_time" << std::endl; 
+      costmap_updates_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_width" << " " << "uint32_height" << " " << "int8_data_size.bytes" << std::endl; 
 
       rclcpp::SubscriptionOptions sub_options;
       sub_options.qos_overriding_options = rclcpp::QosOverridingOptions::with_default_policies();
@@ -64,7 +64,7 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
-      image_raw_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+      image_raw_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << " " << msg->height << " " << msg->width << " " << msg->step << " " << msg->data.size() << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -75,7 +75,7 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
-      image_rect_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+      image_rect_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << " " << msg->height << " " << msg->width << " " << msg->step << " " << msg->data.size() << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -86,7 +86,7 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
-      image_raw_comp_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+      image_raw_comp_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << " " << msg->data.size() << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -97,7 +97,7 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
-      image_stereo_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+      image_stereo_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << " " << msg->height << " " << msg->width << " " << msg->step << " " << msg->data.size() << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -108,7 +108,7 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
-      costmap_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+      costmap_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << " " << msg->info.width << " " << msg->info.height << " " <<  msg->data.size() << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -119,7 +119,7 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
-      costmap_raw_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+      costmap_raw_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << " " << msg->metadata.map_load_time.sec + (1e-9 * msg->metadata.map_load_time.nanosec) << " " << msg->metadata.update_time.sec + (1e-9 * msg->metadata.update_time.nanosec) << " "<< msg->metadata.size_x << " " << msg->metadata.size_y << " " << msg->data.size() << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
@@ -130,7 +130,7 @@ class ZenohSubscriber : public rclcpp::Node
       double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
       double time_now = this->get_clock()->now().seconds();
 
-      costmap_updates_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << std::endl;
+      costmap_updates_ << std::fixed << std::setprecision(3) << msg_time << " " << time_now << " " << msg->width << " " << msg->height << " " << msg->data.size() << std::endl;
 
       // RCLCPP_INFO(this->get_logger(), "time in msg: %f secs", msg_time);
       // RCLCPP_INFO(this->get_logger(), "time now: %f secs", time_now);
