@@ -23,25 +23,25 @@ class ZenohSubscriber : public rclcpp::Node
       double file_time = this->get_clock()->now().seconds();
       std::string time_str = std::to_string(file_time);
 
-      image_raw_.open(time_str + "oak_image_raw.csv");
+      image_raw_.open(time_str + "_oak_image_raw.csv");
       image_raw_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_height" << " " << "uint32_width" << " " << "uint32_step" << " " << "uint8_data_size.bytes" << std::endl;
 
-      image_rect_.open(time_str + "oak_image_rect.csv");
+      image_rect_.open(time_str + "_oak_image_rect.csv");
       image_rect_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_height" << " " << "uint32_width" << " " << "uint32_step" << " " << "uint8_data_size.bytes" << std::endl;
 
-      image_raw_comp_.open(time_str + "oak_image_raw_comp.csv");
+      image_raw_comp_.open(time_str + "_oak_image_raw_comp.csv");
       image_raw_comp_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint8_data_size.bytes" << std::endl;
 
-      image_stereo_.open(time_str + "oak_image_stereo.csv");
+      image_stereo_.open(time_str + "_oak_image_stereo.csv");
       image_stereo_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_height" << " " << "uint32_width" << " " << "uint32_step" << " " << "uint8_data_size.bytes" << std::endl; 
 
-      costmap_.open(time_str + "costmap.csv");
+      costmap_.open(time_str + "_costmap.csv");
       costmap_ << "msg_published_time" << " " << "msg_received_time" << " " << "info.width" << " " << "info.height" << " " << "int8_data_size.bytes" << std::endl; 
 
-      costmap_raw_.open(time_str + "costmap_raw.csv");
+      costmap_raw_.open(time_str + "_costmap_raw.csv");
       costmap_raw_ << "msg_published_time" << " " << "msg_received_time" << " " << "map_load_time.secs" << " " << "update_time.secs" << " " << "uint32_metadata.size_x" << " " << "uint32_metadata.size_y" << " " << "uint8_data_size.bytes" << std::endl;   
 
-      costmap_updates_.open(time_str + "costmap_updates.csv");
+      costmap_updates_.open(time_str + "_costmap_updates.csv");
       costmap_updates_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_width" << " " << "uint32_height" << " " << "int8_data_size.bytes" << std::endl; 
 
       rclcpp::SubscriptionOptions sub_options;
