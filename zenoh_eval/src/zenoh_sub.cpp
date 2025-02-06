@@ -12,6 +12,9 @@
 #include "nav2_msgs/msg/costmap.hpp"
 #include "map_msgs/msg/occupancy_grid_update.hpp"
 
+#include <ctime>
+#include <sstream>
+
 using std::placeholders::_1;
 
 class ZenohSubscriber : public rclcpp::Node
@@ -21,7 +24,15 @@ class ZenohSubscriber : public rclcpp::Node
     : Node("ZenohSubscriber")
     {
       double file_time = this->get_clock()->now().seconds();
-      std::string time_str = std::to_string(file_time);
+
+      std::time_t file_time_int = static_cast<std::time_t>(file_time);
+
+      std::tm* time_info = std::localtime(&file_time_int);
+
+      std::stringstream time_stream;
+      time_stream << std::put_time(time_info, "%c");
+
+      std::string time_str = time_stream.str();
 
       image_raw_.open(time_str + "_oak_image_raw.csv");
       image_raw_ << "msg_published_time" << " " << "msg_received_time" << " " << "uint32_height" << " " << "uint32_width" << " " << "uint32_step" << " " << "uint8_data_size.bytes" << std::endl;
