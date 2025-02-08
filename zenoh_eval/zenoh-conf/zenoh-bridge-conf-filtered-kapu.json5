@@ -101,6 +101,12 @@
         "/summit/oak/rgb/camera_info=1.0", 
         "/summit/oak/stereo/image_raw=1.0", 
         "/summit/oak/stereo/camera_info=1.0",
+        "/summit/local_costmap/clearing_endpoints=1.0",
+        "/summit/local_costmap/costmap=1.0",
+        "/summit/local_costmap/costmap_raw=1.0",
+        "/summit/local_costmap/costmap_updates=1.0",
+        "/summit/local_costmap/local_costmap/transition_event=1.0",
+        "/summit/local_costmap/published_footprint=1.0",
          ],
 
       pub_priorities: ["/summit/tf_static=1:express", "/summit/robot_description=1", "/summit/tf=1"],

@@ -47,6 +47,10 @@
        action_clients: ["/summit/.*"],
       },
 
+        pub_max_frequencies: [       
+        "/summit/oak/stereo/image_raw=1.0", 
+         ],
+
       pub_priorities: ["/summit/tf_static=1:express", "/summit/robot_description=1", "/summit/tf=1"],
       //// queries_timeout: Timeouts configuration for various Zenoh queries.
       ////                  Each field is optional. If not set, the 'default' timeout (5.0 seconds by default) applies to all queries.
