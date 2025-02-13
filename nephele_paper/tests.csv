@@ -1,0 +1,7 @@
+Tests:
+1. All topics max freq, camera 480p (done)
+2. All topics max freq, camera 720p (done)
+3. All topics 1 Hz freq, camera 480p (skipped?)
+4. Oak stereo image, max freq 480p (done)
+5. Oak stereo image, 1 Hz freq 480p (done)
+6. Oak stereo image, 1 Hz 720p (done)
