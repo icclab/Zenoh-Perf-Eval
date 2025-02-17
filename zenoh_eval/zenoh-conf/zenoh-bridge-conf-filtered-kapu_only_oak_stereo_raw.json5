@@ -1,9 +1,18 @@
 {
   mode: "client",
   connect:{ 
-//  timeout_ms: -1,
-//  exit_on_failure: false,
-  endpoints: ["tcp/160.85.253.140:30447"] 
+  //  timeout_ms: -1,
+  //  exit_on_failure: false,
+  // endpoints: ["tcp/160.85.253.140:30447"] 
+  endpoints: ["quic/160.85.253.140:30452"]
+  },
+  "transport": {
+    "link": {
+      "tls": {
+        "root_ca_certificate": "/home/ros/minica.pem",
+        "verify_name_on_connect": false,
+      }
+    }
   },
   timestamping: {
     /// Whether data messages should be timestamped if not already.
