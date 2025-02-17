@@ -1,0 +1,1 @@
+msg_published_time msg_received_time map_load_time.secs update_time.secs uint32_metadata.size_x uint32_metadata.size_y uint8_data_size.bytes latency_secs
