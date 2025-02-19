@@ -58,7 +58,7 @@ class ZenohSubscriber : public rclcpp::Node
       costmap_raw_ << "msg_published_time" << " " << "msg_received_time" << " " << "map_load_time.secs" << " " << "update_time.secs" << " " << "uint32_metadata.size_x" << " " << "uint32_metadata.size_y" << " " << "uint8_data_size.bytes" << " " << "latency_secs" << std::endl;   
 
       evaluations_.open(filename_append_ + "_" + time_str + "_evaluations.csv");
-      evaluations_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << " " << "mean_data_size_B" << std::endl;
+      evaluations_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "mean_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << " " << "mean_data_size_B" << std::endl;
 
       rclcpp::SubscriptionOptions sub_options;
       sub_options.qos_overriding_options = rclcpp::QosOverridingOptions::with_default_policies();
@@ -144,6 +144,7 @@ class ZenohSubscriber : public rclcpp::Node
         image_raw_ << std::fixed << std::setprecision(6) << msg_time << " " << time_now << " " << msg->height << " " << msg->width << " " << msg->step << " " << msg->data.size() << " " << latency << std::endl;
         
         count_image_raw_++;
+        latency_mean_image_raw_ += latency;
 
         if (get_start_time_image_raw_)
         {
@@ -161,15 +162,16 @@ class ZenohSubscriber : public rclcpp::Node
           median = calculate_median(count_image_raw_vector_);
 
           image_raw_ << std::endl;
-          image_raw_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
-          image_raw_ << std::fixed << std::setprecision(6) << "oak/rgb/image_raw" << " " << count_image_raw_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl; 
-          evaluations_ << std::fixed << std::setprecision(6) << "oak/rgb/image_raw" << " " << count_image_raw_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl;
+          image_raw_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "mean_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
+          image_raw_ << std::fixed << std::setprecision(6) << "oak/rgb/image_raw" << " " << count_image_raw_ << " " << total_time << " " << median << " " << latency_mean_image_raw_ / count_image_raw_ << " " << msg_freq << " " << throughput << std::endl; 
+          evaluations_ << std::fixed << std::setprecision(6) << "oak/rgb/image_raw" << " " << count_image_raw_ << " " << total_time << " " << median << " " << latency_mean_image_raw_ / count_image_raw_ << " " << msg_freq << " " << throughput << std::endl;
           // image_raw_.close();
           flag_1 = false;
           end_script_image_raw_ = false;
           start_time_image_raw_ = -1.0;
           count_image_raw_ = 0;
           start_script_image_raw_ = false;
+          latency_mean_image_raw_ = 0.0;
           count_image_raw_vector_.clear();
         }
       }
@@ -188,6 +190,7 @@ class ZenohSubscriber : public rclcpp::Node
         image_rect_ << std::fixed << std::setprecision(6) << msg_time << " " << time_now << " " << msg->height << " " << msg->width << " " << msg->step << " " << msg->data.size() << " " << latency << std::endl;
         
         count_image_rect_++;
+        latency_mean_image_rect_ += latency;
 
         if (get_start_time_image_rect_)
         {
@@ -205,14 +208,15 @@ class ZenohSubscriber : public rclcpp::Node
           median = calculate_median(count_image_rect_vector_);
 
           image_rect_ << std::endl;
-          image_rect_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
-          image_rect_ << std::fixed << std::setprecision(6) << "oak/rgb/image_rect" << " " << count_image_rect_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl; 
-          evaluations_ << std::fixed << std::setprecision(6) << "oak/rgb/image_rect" << " " << count_image_rect_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl; 
+          image_rect_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "mean_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
+          image_rect_ << std::fixed << std::setprecision(6) << "oak/rgb/image_rect" << " " << count_image_rect_ << " " << total_time << " " << median << " " << latency_mean_image_rect_ / count_image_rect_ << " " << msg_freq << " " << throughput << std::endl; 
+          evaluations_ << std::fixed << std::setprecision(6) << "oak/rgb/image_rect" << " " << count_image_rect_ << " " << total_time << " " << median << " " << latency_mean_image_rect_ / count_image_rect_ << " " << msg_freq << " " << throughput << std::endl; 
           // image_rect_.close();
           flag_2 = false;
           start_time_image_rect_ = -1.0;
           count_image_rect_ = 0;
           end_script_image_rect_ = false;
+          latency_mean_image_rect_ = 0.0;
           count_image_rect_vector_.clear();
         }
       }
@@ -231,8 +235,10 @@ class ZenohSubscriber : public rclcpp::Node
         data_image_raw_comp_ += msg->data.size();
 
         image_raw_comp_ << std::fixed << std::setprecision(6) << msg_time << " " << time_now << " " << msg->data.size() << " " << latency << std::endl;
+        
         count_image_raw_comp_++;
-
+        latency_mean_image_raw_comp_ += latency;
+        
         if (get_start_time_image_raw_comp_)
         {
           start_time_image_raw_comp_ = time_now;
@@ -249,9 +255,9 @@ class ZenohSubscriber : public rclcpp::Node
           median = calculate_median(count_image_raw_comp_vector_);
 
           image_raw_comp_ << std::endl;
-          image_raw_comp_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << " " << "mean_data_size_B" << std::endl;
-          image_raw_comp_ << std::fixed << std::setprecision(6) << "oak/rgb/image_raw/compressed" << " " << count_image_raw_comp_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << " " << static_cast<unsigned long int>(std::round(1e6 * throughput / msg_freq)) << std::endl;
-          evaluations_ << std::fixed << std::setprecision(6) << "oak/rgb/image_raw/compressed" << " " << count_image_raw_comp_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << " " << static_cast<unsigned long int>(std::round(1e6 * throughput / msg_freq)) << std::endl;
+          image_raw_comp_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "mean_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << " " << "mean_data_size_B" << std::endl;
+          image_raw_comp_ << std::fixed << std::setprecision(6) << "oak/rgb/image_raw/compressed" << " " << count_image_raw_comp_ << " " << total_time << " " << median << " " << latency_mean_image_raw_comp_ / count_image_raw_comp_ << " " << msg_freq << " " << throughput << " " << static_cast<unsigned long int>(std::round(1e6 * throughput / msg_freq)) << std::endl;
+          evaluations_ << std::fixed << std::setprecision(6) << "oak/rgb/image_raw/compressed" << " " << count_image_raw_comp_ << " " << total_time << " " << median << " " << latency_mean_image_raw_comp_ / count_image_raw_comp_ << " " << msg_freq << " " << throughput << " " << static_cast<unsigned long int>(std::round(1e6 * throughput / msg_freq)) << std::endl;
           // image_raw_comp_.close();
           flag_3 = false;
           end_script_image_raw_comp_ = false;
@@ -259,6 +265,7 @@ class ZenohSubscriber : public rclcpp::Node
           count_image_raw_comp_ = 0;
           start_script_image_raw_comp_ = false;
           data_image_raw_comp_ = 0;
+          latency_mean_image_raw_comp_ = 0.0;
           count_image_raw_comp_vector_.clear();
         }
       }
@@ -277,6 +284,7 @@ class ZenohSubscriber : public rclcpp::Node
         image_stereo_ << std::fixed << std::setprecision(6) << msg_time << " " << time_now << " " << msg->height << " " << msg->width << " " << msg->step << " " << msg->data.size() << " " << latency << std::endl;
 
         count_image_stereo_++;
+        latency_mean_image_stereo_ += latency; 
 
         if (get_start_time_image_stereo_)
         {
@@ -294,14 +302,15 @@ class ZenohSubscriber : public rclcpp::Node
           median = calculate_median(count_image_stereo_vector_);
 
           image_stereo_ << std::endl;
-          image_stereo_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
-          image_stereo_ << std::fixed << std::setprecision(6) << "oak/stereo/image_raw" << " " << count_image_stereo_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl;
-          evaluations_ << std::fixed << std::setprecision(6) << "oak/stereo/image_raw" << " " << count_image_stereo_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl;
+          image_stereo_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "mean_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
+          image_stereo_ << std::fixed << std::setprecision(6) << "oak/stereo/image_raw" << " " << count_image_stereo_ << " " << total_time << " " << median << " " << latency_mean_image_stereo_ / count_image_stereo_ << " " << msg_freq << " " << throughput << std::endl;
+          evaluations_ << std::fixed << std::setprecision(6) << "oak/stereo/image_raw" << " " << count_image_stereo_ << " " << total_time << " " << median << " " << latency_mean_image_stereo_ / count_image_stereo_ << " " << msg_freq << " " << throughput << std::endl;
           // image_stereo_.close();
           flag_4 = false;
           start_time_image_stereo_ = -1.0;
           count_image_stereo_ = 0;
           end_script_image_stereo_ = false;
+          latency_mean_image_stereo_ = 0.0;
           count_image_stereo_vector_.clear();
         }
       }
@@ -318,7 +327,9 @@ class ZenohSubscriber : public rclcpp::Node
         count_costmap_vector_.push_back(latency);
 
         costmap_ << std::fixed << std::setprecision(6) << msg_time << " " << time_now << " " << msg->info.width << " " << msg->info.height << " " <<  msg->data.size() << " " << latency << std::endl;
+        
         count_costmap_++;
+        latency_mean_costmap_ += latency;
 
         if (get_start_time_costmap_)
         {
@@ -336,15 +347,16 @@ class ZenohSubscriber : public rclcpp::Node
           median = calculate_median(count_costmap_vector_);
 
           costmap_ << std::endl;
-          costmap_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
-          costmap_ << std::fixed << std::setprecision(6) << "local_costmap/costmap" << " " << count_costmap_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl; 
-          evaluations_ << std::fixed << std::setprecision(6) << "local_costmap/costmap" << " " << count_costmap_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl; 
+          costmap_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "mean_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
+          costmap_ << std::fixed << std::setprecision(6) << "local_costmap/costmap" << " " << count_costmap_ << " " << total_time << " " << median << " " << latency_mean_costmap_ / count_costmap_ << " " << msg_freq << " " << throughput << std::endl; 
+          evaluations_ << std::fixed << std::setprecision(6) << "local_costmap/costmap" << " " << count_costmap_ << " " << total_time << " " << median << " " << latency_mean_costmap_ / count_costmap_ << " " << msg_freq << " " << throughput << std::endl; 
           // costmap_.close();
           flag_5 = false;
           end_script_costmap_ = false;
           start_time_costmap_ = -1.0;
           count_costmap_ = 0;
           end_script_costmap_ = false;
+          latency_mean_costmap_ = 0.0;
           count_costmap_vector_.clear();
         }
       }
@@ -363,6 +375,7 @@ class ZenohSubscriber : public rclcpp::Node
         costmap_raw_ << std::fixed << std::setprecision(6) << msg_time << " " << time_now << " " << msg->metadata.map_load_time.sec + (1e-9 * msg->metadata.map_load_time.nanosec) << " " << msg->metadata.update_time.sec + (1e-9 * msg->metadata.update_time.nanosec) << " "<< msg->metadata.size_x << " " << msg->metadata.size_y << " " << msg->data.size() << " " << latency << std::endl;
 
         count_costmap_raw_++;
+        latency_mean_costmap_raw_ += latency;
 
         if (get_start_time_costmap_raw_)
         {
@@ -380,15 +393,16 @@ class ZenohSubscriber : public rclcpp::Node
           median = calculate_median(count_costmap_raw_vector_);
 
           costmap_raw_ << std::endl;
-          costmap_raw_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
-          costmap_raw_ << std::fixed << std::setprecision(6) << "local_costmap/costmap_raw" << " " << count_costmap_raw_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl; 
-          evaluations_ << std::fixed << std::setprecision(6) << "local_costmap/costmap_raw" << " " << count_costmap_raw_ << " " << total_time << " " << median << " " << msg_freq << " " << throughput << std::endl; 
+          costmap_raw_ << filename_append_ << " " << "msg_count" << " " << "evaluation_time_secs" << " " << "median_latency_secs" << " " << "mean_latency_secs" << " " << "msg_freq_Hz" << " " << "throughput_MB_p_sec" << std::endl;
+          costmap_raw_ << std::fixed << std::setprecision(6) << "local_costmap/costmap_raw" << " " << count_costmap_raw_ << " " << total_time << " " << median << " " << latency_mean_costmap_raw_ / count_costmap_raw_ << " " << msg_freq << " " << throughput << std::endl; 
+          evaluations_ << std::fixed << std::setprecision(6) << "local_costmap/costmap_raw" << " " << count_costmap_raw_ << " " << total_time << " " << median << " " << latency_mean_costmap_raw_ / count_costmap_raw_ << " " << msg_freq << " " << throughput << std::endl; 
           // costmap_raw_.close();
           flag_6 = false;
           end_script_costmap_raw_ = false;
           start_time_costmap_raw_ = -1.0;
           count_costmap_raw_ = 0;
           end_script_costmap_raw_ = false;
+          latency_mean_costmap_raw_ = 0.0;
           count_costmap_raw_vector_.clear();
         }
       }
@@ -470,6 +484,13 @@ class ZenohSubscriber : public rclcpp::Node
     double start_time_image_raw_comp_{-1.0};
     double start_time_costmap_{-1.0};
     double start_time_costmap_raw_{-1.0};
+
+    double latency_mean_image_raw_{0.0};
+    double latency_mean_image_rect_{0.0};
+    double latency_mean_image_raw_comp_{0.0};
+    double latency_mean_image_stereo_{0.0};
+    double latency_mean_costmap_{0.0};
+    double latency_mean_costmap_raw_{0.0};
 
     std::vector<double> count_image_raw_vector_;
     std::vector<double> count_image_rect_vector_;
