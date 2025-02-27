@@ -63,14 +63,14 @@ class ZenohSubscriber : public rclcpp::Node
       rclcpp::SubscriptionOptions sub_options;
       sub_options.qos_overriding_options = rclcpp::QosOverridingOptions::with_default_policies();
 
-      image_raw_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/summit/oak/rgb/image_raw", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_raw_callback, this, _1), sub_options);
+      image_raw_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/summit/oak/rgb/image_raw_throttle", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_raw_callback, this, _1), sub_options);
       // image_rect_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/summit/oak/rgb/image_rect", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_rect_callback, this, _1), sub_options);
       // image_raw_comp_sub_ = this->create_subscription<sensor_msgs::msg::CompressedImage>("/summit/oak/rgb/image_raw/compressed", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_raw_comp_callback, this, _1), sub_options);
       // image_stereo_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/summit/oak/stereo/image_raw", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_stereo_callback, this, _1), sub_options);
 
       auto custom_qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
 
-      costmap_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>("/summit/local_costmap/costmap", custom_qos, std::bind(&ZenohSubscriber::costmap_callback, this, _1));
+      costmap_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>("/summit/local_costmap/costmap_throttle", custom_qos, std::bind(&ZenohSubscriber::costmap_callback, this, _1));
       // costmap_raw_sub_ = this->create_subscription<nav2_msgs::msg::Costmap>("/summit/local_costmap/costmap_raw", custom_qos, std::bind(&ZenohSubscriber::costmap_raw_callback, this, _1));
 
       start_script_sub_ = this->create_subscription<std_msgs::msg::Bool>("/summit/start_zenoh_script", custom_qos, std::bind(&ZenohSubscriber::start_script_callback, this, _1)); 
