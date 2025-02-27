@@ -137,6 +137,17 @@ class ZenohSubscriber : public rclcpp::Node
       {   
         double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
         double time_now = this->get_clock()->now().seconds();
+
+        if (get_start_time_image_raw_)
+        {
+          first_msg_time_image_raw_ = msg_time; 
+          start_time_image_raw_ = time_now;
+          get_start_time_image_raw_ = false;
+          return;
+        }
+
+        time_now += first_msg_time_image_raw_ - start_time_image_raw_; 
+
         double latency = time_now - msg_time;
 
         count_image_raw_vector_.push_back(latency);
@@ -145,12 +156,6 @@ class ZenohSubscriber : public rclcpp::Node
         
         count_image_raw_++;
         latency_mean_image_raw_ += latency;
-
-        if (get_start_time_image_raw_)
-        {
-          start_time_image_raw_ = time_now;
-          get_start_time_image_raw_ = false;
-        }
 
         if (end_script_image_raw_)
         {
@@ -183,6 +188,17 @@ class ZenohSubscriber : public rclcpp::Node
       {  
         double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
         double time_now = this->get_clock()->now().seconds();
+
+        if (get_start_time_image_rect_)
+        {
+          first_msg_time_image_rect_ = msg_time;
+          start_time_image_rect_ = time_now;
+          get_start_time_image_rect_ = false;
+          return;
+        }
+
+        time_now += first_msg_time_image_rect_ - start_time_image_rect_; 
+        
         double latency = time_now - msg_time;
 
         count_image_rect_vector_.push_back(latency);
@@ -191,12 +207,6 @@ class ZenohSubscriber : public rclcpp::Node
         
         count_image_rect_++;
         latency_mean_image_rect_ += latency;
-
-        if (get_start_time_image_rect_)
-        {
-          start_time_image_rect_ = time_now;
-          get_start_time_image_rect_ = false;
-        }
 
         if (end_script_image_rect_)
         {
@@ -228,6 +238,17 @@ class ZenohSubscriber : public rclcpp::Node
       { 
         double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
         double time_now = this->get_clock()->now().seconds();
+
+        if (get_start_time_image_raw_comp_)
+        {
+          first_msg_time_image_raw_comp_ = msg_time;
+          start_time_image_raw_comp_ = time_now;
+          get_start_time_image_raw_comp_ = false;
+          return;
+        }
+        
+        time_now += first_msg_time_image_raw_comp_ - start_time_image_raw_comp_; 
+
         double latency = time_now - msg_time;
 
         count_image_raw_comp_vector_.push_back(latency);
@@ -238,12 +259,6 @@ class ZenohSubscriber : public rclcpp::Node
         
         count_image_raw_comp_++;
         latency_mean_image_raw_comp_ += latency;
-        
-        if (get_start_time_image_raw_comp_)
-        {
-          start_time_image_raw_comp_ = time_now;
-          get_start_time_image_raw_comp_ = false;
-        }
 
         if (end_script_image_raw_comp_)
         {
@@ -277,6 +292,17 @@ class ZenohSubscriber : public rclcpp::Node
       { 
         double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
         double time_now = this->get_clock()->now().seconds();
+
+        if (get_start_time_image_stereo_)
+        {
+          first_msg_time_image_stereo_ = msg_time;
+          start_time_image_stereo_ = time_now;
+          get_start_time_image_stereo_ = false;
+          return;
+        }
+        
+        time_now += first_msg_time_image_stereo_ - start_time_image_stereo_; 
+
         double latency = time_now - msg_time;
 
         count_image_stereo_vector_.push_back(latency);
@@ -285,12 +311,6 @@ class ZenohSubscriber : public rclcpp::Node
 
         count_image_stereo_++;
         latency_mean_image_stereo_ += latency; 
-
-        if (get_start_time_image_stereo_)
-        {
-          start_time_image_stereo_ = time_now;
-          get_start_time_image_stereo_ = false;
-        }
 
         if (end_script_image_stereo_)
         {
@@ -322,6 +342,17 @@ class ZenohSubscriber : public rclcpp::Node
       { 
         double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
         double time_now = this->get_clock()->now().seconds();
+
+        if (get_start_time_costmap_)
+        {
+          first_msg_time_costmap_ = msg_time;
+          start_time_costmap_ = time_now;
+          get_start_time_costmap_ = false;
+          return;
+        }
+        
+        time_now += first_msg_time_costmap_ - start_time_costmap_; 
+
         double latency = time_now - msg_time;
 
         count_costmap_vector_.push_back(latency);
@@ -330,12 +361,6 @@ class ZenohSubscriber : public rclcpp::Node
         
         count_costmap_++;
         latency_mean_costmap_ += latency;
-
-        if (get_start_time_costmap_)
-        {
-          start_time_costmap_ = time_now;
-          get_start_time_costmap_ = false;
-        }
 
         if (end_script_costmap_)
         {
@@ -368,6 +393,17 @@ class ZenohSubscriber : public rclcpp::Node
       { 
         double msg_time = msg->header.stamp.sec + (1e-9 * msg->header.stamp.nanosec);
         double time_now = this->get_clock()->now().seconds();
+
+        if (get_start_time_costmap_raw_)
+        {
+          first_msg_time_costmap_raw_ = msg_time;
+          start_time_costmap_raw_ = time_now;
+          get_start_time_costmap_raw_ = false;
+          return;
+        }
+        
+        time_now += first_msg_time_costmap_raw_ - start_time_costmap_raw_; 
+
         double latency = time_now - msg_time;
 
         count_costmap_raw_vector_.push_back(latency);
@@ -376,12 +412,6 @@ class ZenohSubscriber : public rclcpp::Node
 
         count_costmap_raw_++;
         latency_mean_costmap_raw_ += latency;
-
-        if (get_start_time_costmap_raw_)
-        {
-          start_time_costmap_raw_ = time_now;
-          get_start_time_costmap_raw_ = false;
-        }
 
         if (end_script_costmap_raw_)
         {
@@ -484,6 +514,13 @@ class ZenohSubscriber : public rclcpp::Node
     double start_time_image_raw_comp_{-1.0};
     double start_time_costmap_{-1.0};
     double start_time_costmap_raw_{-1.0};
+
+    double first_msg_time_image_raw_{-1.0};
+    double first_msg_time_image_rect_{-1.0};
+    double first_msg_time_image_stereo_{-1.0};
+    double first_msg_time_image_raw_comp_{-1.0};
+    double first_msg_time_costmap_{-1.0};
+    double first_msg_time_costmap_raw_{-1.0};
 
     double latency_mean_image_raw_{0.0};
     double latency_mean_image_rect_{0.0};
