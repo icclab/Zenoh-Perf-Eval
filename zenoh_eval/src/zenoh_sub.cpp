@@ -70,7 +70,7 @@ class ZenohSubscriber : public rclcpp::Node
 
       auto custom_qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
 
-      costmap_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>("/summit/local_costmap/costmap_throttle", custom_qos, std::bind(&ZenohSubscriber::costmap_callback, this, _1));
+      costmap_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>("/summit/local_costmap/costmap", custom_qos, std::bind(&ZenohSubscriber::costmap_callback, this, _1));
       // costmap_raw_sub_ = this->create_subscription<nav2_msgs::msg::Costmap>("/summit/local_costmap/costmap_raw", custom_qos, std::bind(&ZenohSubscriber::costmap_raw_callback, this, _1));
 
       start_script_sub_ = this->create_subscription<std_msgs::msg::Bool>("/summit/start_zenoh_script", custom_qos, std::bind(&ZenohSubscriber::start_script_callback, this, _1)); 
