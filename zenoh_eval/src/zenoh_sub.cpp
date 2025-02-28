@@ -28,6 +28,9 @@ class ZenohSubscriber : public rclcpp::Node
       this->declare_parameter("filename_append", "test");
       filename_append_ = this->get_parameter("filename_append").as_string();
 
+      this->declare_parameter("oak_camera_topic", "stereo/image_raw_throttle");
+      oak_camera_topic_ = this->get_parameter("oak_camera_topic").as_string();
+
       double file_time = this->get_clock()->now().seconds();
 
       std::time_t file_time_int = static_cast<std::time_t>(file_time);
@@ -63,7 +66,7 @@ class ZenohSubscriber : public rclcpp::Node
       rclcpp::SubscriptionOptions sub_options;
       sub_options.qos_overriding_options = rclcpp::QosOverridingOptions::with_default_policies();
 
-      image_raw_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/summit/oak/rgb/image_raw_throttle", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_raw_callback, this, _1), sub_options);
+      image_raw_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/summit/oak/" + oak_camera_topic_, rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_raw_callback, this, _1), sub_options);
       // image_rect_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/summit/oak/rgb/image_rect", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_rect_callback, this, _1), sub_options);
       // image_raw_comp_sub_ = this->create_subscription<sensor_msgs::msg::CompressedImage>("/summit/oak/rgb/image_raw/compressed", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_raw_comp_callback, this, _1), sub_options);
       // image_stereo_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/summit/oak/stereo/image_raw", rclcpp::QoS(10), std::bind(&ZenohSubscriber::image_stereo_callback, this, _1), sub_options);
@@ -538,6 +541,7 @@ class ZenohSubscriber : public rclcpp::Node
     std::vector<double> count_costmap_vector_;
     // std::vector<double> count_costmap_raw_vector_;
     std::string filename_append_;
+    std::string oak_camera_topic_;
 };
 
 int main(int argc, char * argv[])
