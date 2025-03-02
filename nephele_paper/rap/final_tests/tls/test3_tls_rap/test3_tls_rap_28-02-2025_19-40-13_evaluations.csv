@@ -1,0 +1,3 @@
+test3_tls_rap msg_count evaluation_time_secs median_latency_secs mean_latency_secs msg_freq_Hz throughput_MB_p_sec mean_data_size_B
+oak/rgb/image_raw 3017 300.023317 0.558856 0.579947 10.055885 6.178336
+local_costmap/costmap 500 299.651236 0.114593 0.135929 1.668607 0.006007
