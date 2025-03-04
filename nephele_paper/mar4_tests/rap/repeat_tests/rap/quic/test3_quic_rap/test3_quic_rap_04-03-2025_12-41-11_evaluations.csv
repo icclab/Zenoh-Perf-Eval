@@ -1,0 +1,3 @@
+test3_quic_rap msg_count evaluation_time_secs median_latency_secs mean_latency_secs msg_freq_Hz throughput_MB_p_sec mean_data_size_B
+oak/rgb/image_raw 2890 300.035592 1.371347 1.349956 9.632191 5.918018
+local_costmap/costmap 447 300.134222 0.300935 0.314002 1.489334 0.005362
